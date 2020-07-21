@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "129103401592",
+    "firebase_url": "https://shift-test-40e8b.firebaseio.com",
+    "project_id": "shift-test-40e8b",
+    "storage_bucket": "shift-test-40e8b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:129103401592:android:6dcfa51638b9aa82b2138d",
+        "android_client_info": {
+          "package_name": "dev.yoneyan.shift"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "129103401592-45aoveqbr25coeqoacfueacjmi15knms.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDe-OTLpFASLop7lktz-rf0uNnYHTOLhpI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "129103401592-45aoveqbr25coeqoacfueacjmi15knms.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
