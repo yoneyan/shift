@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shift/login.dart';
@@ -5,21 +7,33 @@ import 'package:shift/pages/setting.dart';
 import 'package:shift/pages/shift.dart';
 import 'package:shift/pages/shiftRegistration.dart';
 
-import 'auth.dart';
+import 'package:shift/services/auth.dart';
 import 'routes.dart';
 
-class AppDrawer extends StatelessWidget {
-  final Auth auth;
+class AppDrawer extends StatefulWidget {
+//  const AppDrawer({Key key, this.auth}) : super(key: key);
 
-  const AppDrawer({Key key, this.auth}) : super(key: key);
+  @override
+  State createState() {
+    return AppDrawerState();
+  }
+}
+
+class AppDrawerState extends State<AppDrawer> {
+  final Auth _auth = new Auth();
+  var _name = "Loading...";
+
+  @override
+  void initState() {
+    super.initState();
+    print("initState");
+    _auth.getUserName().then((value) => _name = value);
+
+//    initializeUser();
+  }
 
   @override
   Widget build(BuildContext context) {
-//    var userID = auth.currentUser().then((value) => userID = value);null
-    var _name = "Loading...";
-//    auth.getUserName().then((value) => _name = value);
-
-
     return Drawer(
       child: ListView(
         // Important: Remove any padding from the ListView.
@@ -50,13 +64,6 @@ class AppDrawer extends StatelessWidget {
                       builder: (context) => ShiftRegistrationPage()));
             },
           ),
-          ListTile(
-            leading: Icon(Icons.account_circle),
-            title: Text('Profile'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
           Divider(),
           ListTile(
             leading: Icon(Icons.settings),
@@ -68,12 +75,12 @@ class AppDrawer extends StatelessWidget {
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.settings),
             title: Text('Logout'),
             onTap: () {
-              auth.signOut();
+              _auth.signOut();
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => LoginPage()));
+              snackBar(context, "ログアウトしました。");
             },
           ),
         ],
