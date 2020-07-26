@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shift/login.dart';
 import 'package:shift/pages/setting.dart';
 import 'package:shift/pages/shift.dart';
+import 'package:shift/pages/shiftRegistration.dart';
 
 import 'auth.dart';
 import 'routes.dart';
@@ -14,20 +15,25 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+//    var userID = auth.currentUser().then((value) => userID = value);null
+    var _name = "Loading...";
+//    auth.getUserName().then((value) => _name = value);
+
+
     return Drawer(
       child: ListView(
         // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            child: Text('Drawer Header'),
+            child: Text(_name),
             decoration: BoxDecoration(
               color: Colors.blue,
             ),
           ),
           ListTile(
             leading: Icon(Icons.calendar_today),
-            title: Text('シフト登録'),
+            title: Text('シフト'),
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ShiftPage()));
@@ -36,9 +42,12 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.calendar_view_day),
-            title: Text('Messages'),
+            title: Text('シフト登録'),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ShiftRegistrationPage()));
             },
           ),
           ListTile(
@@ -71,4 +80,9 @@ class AppDrawer extends StatelessWidget {
       ),
     );
   }
+}
+
+snackBar(BuildContext context, String text) {
+  final snackBar = SnackBar(content: Text(text));
+  Scaffold.of(context).showSnackBar(snackBar);
 }
