@@ -9,8 +9,7 @@ class ShiftRegistrationPage extends StatelessWidget {
 
   DateTime _currentDate = DateTime.now();
 
-  void onDayPressed(DateTime date, List<Event> events) {
-  }
+  void onDayPressed(DateTime date, List<Event> events) {}
 
   @override
   Widget build(BuildContext context) {
@@ -19,26 +18,28 @@ class ShiftRegistrationPage extends StatelessWidget {
           title: Text("シフト登録"),
         ),
         drawer: AppDrawer(),
-        body: Container(
-          child: CalendarCarousel<Event>(
-              onDayPressed: onDayPressed,
-              weekendTextStyle: TextStyle(color: Colors.red),
-              thisMonthDayBorderColor: Colors.grey,
-              weekFormat: false,
-              height: 450.0,
-              selectedDateTime: _currentDate,
-              daysHaveCircularBorder: false,
-              customGridViewPhysics: NeverScrollableScrollPhysics(),
-              markedDateShowIcon: true,
-              markedDateIconMaxShown: 2,
-              todayTextStyle: TextStyle(
-                color: Colors.blue,
-              ),
-              markedDateIconBuilder: (event) {
-                return event.icon;
-              },
-              todayBorderColor: Colors.green,
-              markedDateMoreShowTotal: false),
-        ));
+        body: Column(children: <Widget>[
+          Container(
+            child: CalendarCarousel<Event>(
+                onDayPressed: onDayPressed,
+                weekendTextStyle: TextStyle(color: Colors.red),
+                thisMonthDayBorderColor: Colors.grey,
+                weekFormat: false,
+                height: 450.0,
+                selectedDateTime: _currentDate,
+                daysHaveCircularBorder: false,
+                customGridViewPhysics: NeverScrollableScrollPhysics(),
+                markedDateShowIcon: true,
+                markedDateIconMaxShown: 2,
+                todayTextStyle: TextStyle(
+                  color: Colors.blue,
+                ),
+                markedDateIconBuilder: (event) {
+                  return event.icon;
+                },
+                todayBorderColor: Colors.green,
+                markedDateMoreShowTotal: false),
+          ),
+        ]));
   }
 }
