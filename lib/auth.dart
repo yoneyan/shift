@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class BaseAuth {
-  Future<String> currentUser();
+  Future<FirebaseUser> currentUser();
+
+  Future<String> getUserName();
 
   Future<FirebaseUser> signIn(String email, String password);
 
@@ -13,6 +16,7 @@ abstract class BaseAuth {
 
 class Auth implements BaseAuth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final Firestore _firestore = Firestore.instance;
 
   Future<FirebaseUser> signIn(String email, String password) async {
     FirebaseUser user;
@@ -26,22 +30,30 @@ class Auth implements BaseAuth {
   }
 
   Future<String> createUser(String email, String password) async {
-    String userID;
+    String _userID;
     await _firebaseAuth
         .createUserWithEmailAndPassword(email: email, password: password)
         .then(
-          (value) => userID = value.user.uid,
+          (value) => _userID = value.user.uid,
         );
-    return userID;
+    return _userID;
   }
 
   Future<bool> checkLogin() async {
     return null == _firebaseAuth.currentUser();
   }
 
-  Future<String> currentUser() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    return user != null ? user.uid : null;
+  Future<FirebaseUser> currentUser() async {
+    return _firebaseAuth.currentUser();
+  }
+
+  Future<String> getUserName() async {
+    var _firebaseUser = await FirebaseAuth.instance.currentUser();
+    print(_firebaseUser.uid);
+    DocumentSnapshot _doc =
+        await _firestore.collection("user").document(_firebaseUser.uid).get();
+//    return _doc.data['name'];
+    return "test";
   }
 
   Future<void> signOut() async {
