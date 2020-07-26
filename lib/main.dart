@@ -4,6 +4,7 @@ import 'package:shift/pages/shift.dart';
 import 'auth.dart';
 import 'drawer.dart';
 import 'login.dart';
+import 'pages/shift.dart';
 import 'routes.dart';
 
 void main() {
@@ -43,7 +44,7 @@ class _RootPageState extends State<RootPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Shift",
-      theme: ThemeData.dark(),
+//      theme: ThemeData.dark(),
       home: _isLogin ? ShiftPage() : LoginPage(),
     );
   }

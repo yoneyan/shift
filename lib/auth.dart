@@ -12,24 +12,27 @@ abstract class BaseAuth {
 }
 
 class Auth implements BaseAuth {
-//class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   Future<FirebaseUser> signIn(String email, String password) async {
-    try {
-      FirebaseUser user = (await _firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password)) as FirebaseUser;
-      return user;
-    } catch (e) {
-      print(e);
-      return null;
-    }
+    FirebaseUser user;
+    await _firebaseAuth
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then(
+          (value) => user = value.user,
+        );
+//        .catchError(() => user = null);
+    return user;
   }
 
   Future<String> createUser(String email, String password) async {
-    FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email, password: password)) as FirebaseUser;
-    return user.uid;
+    String userID;
+    await _firebaseAuth
+        .createUserWithEmailAndPassword(email: email, password: password)
+        .then(
+          (value) => userID = value.user.uid,
+        );
+    return userID;
   }
 
   Future<bool> checkLogin() async {
@@ -39,7 +42,6 @@ class Auth implements BaseAuth {
   Future<String> currentUser() async {
     FirebaseUser user = await _firebaseAuth.currentUser();
     return user != null ? user.uid : null;
-//    return true;
   }
 
   Future<void> signOut() async {
