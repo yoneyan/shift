@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shift/pages/shift.dart';
 
-import 'auth.dart';
+import 'package:shift/services/auth.dart';
 import 'drawer.dart';
 
 class LoginPage extends StatefulWidget {
@@ -21,14 +21,39 @@ class _LoginPageState extends State<LoginPage> {
   final passInputController = new TextEditingController();
 
   @override
+  login(String mail, String pass, BuildContext context) async {
+    try {
+      auth
+          .signIn(mail, pass)
+          .then((user) => {
+                print('data.uid'),
+                print("UID: " + user),
+                if (user == null)
+                  {snackBar(context, "メールアドレス又はパスワードが間違っています。")}
+                else
+                  {
+                    print('data.uid'),
+                    print("UID: " + user),
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ShiftPage())),
+                  }
+              })
+          .catchError(() => snackBar(context, "メールアドレス又はパスワードが間違っています。"));
+    } catch (err) {
+      {
+        snackBar(context, "メールアドレス又はパスワードが間違っています。");
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final _passwordFocusNode = FocusNode();
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('ログインページ'),
-        ),
-        body: Builder(
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+            body: Builder(
           builder: (context) => Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -66,35 +91,20 @@ class _LoginPageState extends State<LoginPage> {
                         }
                         return null;
                       },
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(login(
+                            emailInputController.value.text,
+                            passInputController.value.text,
+                            context));
+                      },
                     )),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: RaisedButton(
                       child: Text('ログイン'),
                       onPressed: () {
-                        auth
-                            .signIn(emailInputController.value.text,
-                                passInputController.value.text)
-                            .then((data) => {
-                                  print('data.uid'),
-                                  print(data.uid),
-                                  if (data.uid != null)
-                                    {
-                                      print("UID: " + data.uid),
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ShiftPage()))
-                                    }
-                                  else
-                                    {
-                                      snackBar(
-                                          context, "メールアドレス又はパスワードが間違っています。")
-                                    }
-                                })
-                            .catchError(() =>
-                                snackBar(context, "メールアドレス又はパスワードが間違っています。"));
+                        login(emailInputController.value.text,
+                            passInputController.value.text, context);
                       },
                     )),
                 Padding(
@@ -106,6 +116,6 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
-        ));
+        )));
   }
 }
