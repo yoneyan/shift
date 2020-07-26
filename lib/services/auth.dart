@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shift/drawer.dart';
 
 abstract class BaseAuth {
   Future<FirebaseUser> currentUser();
 
   Future<String> getUserName();
 
-  Future<FirebaseUser> signIn(String email, String password);
+  Future<String> signIn(String email, String password);
 
   Future<String> createUser(String email, String password);
 
@@ -18,15 +19,20 @@ class Auth implements BaseAuth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final Firestore _firestore = Firestore.instance;
 
-  Future<FirebaseUser> signIn(String email, String password) async {
-    FirebaseUser user;
-    await _firebaseAuth
-        .signInWithEmailAndPassword(email: email, password: password)
-        .then(
-          (value) => user = value.user,
-        );
-//        .catchError(() => user = null);
-    return user;
+  Future<String> signIn(String email, String password) async {
+    FirebaseUser _user;
+    try {
+      await _firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then(
+            (value) => _user = value.user,
+          );
+    } catch (err) {
+      _user = null;
+    }
+
+//        .catchError(() => );
+    return _user.uid;
   }
 
   Future<String> createUser(String email, String password) async {
@@ -56,7 +62,17 @@ class Auth implements BaseAuth {
     return "test";
   }
 
+  Future<bool> changePassword(String email) async {
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
+    return true;
+  }
+//  Future<bool> sendVerifyMail(String email) async {
+//    await _firebaseAuth.se(email: email);
+//    return true;
+//  }
+
   Future<void> signOut() async {
-    return _firebaseAuth.signOut();
+    await FirebaseAuth.instance.signOut();
+    return;
   }
 }
