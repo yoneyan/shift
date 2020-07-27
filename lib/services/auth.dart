@@ -3,19 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shift/drawer.dart';
 
-abstract class BaseAuth {
-  Future<FirebaseUser> currentUser();
-
-  Future<String> getUserName();
-
-  Future<String> signIn(String email, String password);
-
-  Future<String> createUser(String email, String password);
-
-  Future<void> signOut();
-}
-
-class Auth implements BaseAuth {
+class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final Firestore _firestore = Firestore.instance;
 
@@ -30,8 +18,6 @@ class Auth implements BaseAuth {
     } catch (err) {
       _user = null;
     }
-
-//        .catchError(() => );
     return _user.uid;
   }
 
@@ -58,7 +44,6 @@ class Auth implements BaseAuth {
     print(_firebaseUser.uid);
     DocumentSnapshot _doc =
         await _firestore.collection("user").document(_firebaseUser.uid).get();
-//    return _doc.data['name'];
     return "test";
   }
 
@@ -66,6 +51,7 @@ class Auth implements BaseAuth {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
     return true;
   }
+
 //  Future<bool> sendVerifyMail(String email) async {
 //    await _firebaseAuth.se(email: email);
 //    return true;
