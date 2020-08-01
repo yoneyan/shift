@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:shift/pages/shiftRegistrationDetail.dart';
+import 'package:shift/services/base.dart';
 
 import '../drawer.dart';
 
@@ -11,16 +12,86 @@ class ShiftRegistrationPage extends StatefulWidget {
 }
 
 class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
-  static const String routeName = '/shiftRegistration';
+  _ShiftRegistrationPageState();
 
-  DateTime _currentDate = DateTime.now();
+  final Base base = new Base();
+
+  //#2 Issue
   DateTime selectDate = DateTime.now();
+  EventList<Event> _markedDateMap = new EventList<Event>();
+  bool status = false;
+  Map<String, Map<String, dynamic>> data =
+      new Map<String, Map<String, dynamic>>();
+  String comment = 'This data is not found.';
+  String decided = 'This data is not found.';
+  String unknown = 'This data is not found.';
+
+  @override
+  void initState() {
+    int _year, _month;
+    base.getShiftRegistrationData().then((value) => {
+          data = value,
+          value.forEach((key, value) {
+            var tmp = key.split('-');
+            _year = int.parse(tmp[0]);
+            _month = int.parse(tmp[1]);
+            try {
+              value.forEach((key, value) {
+                int _day = int.parse(key);
+                print('day: $_day');
+                _markedDateMap.add(
+                    new DateTime(_year, _month, _day),
+                    new Event(
+                        date: new DateTime(_year, _month, _day),
+                        title: 'Event 5',
+                        icon: Container(
+                          decoration: new BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(1000)),
+                              border:
+                                  Border.all(color: Colors.blue, width: 2.0)),
+                          child: new Icon(
+                            Icons.person,
+                            color: Colors.amber,
+                          ),
+                        )));
+              });
+            } catch (err) {
+              print('Error: $err');
+            }
+          }),
+          //This code is to update display.
+          setState(() {
+            status = true;
+          }),
+        });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    base.getUser().then((value) => {print(value)});
+    String genre = "teacher";
+
     void onDayPressed(DateTime date, List<Event> events) {
       setState(() {
-        selectDate = date;
+        try {
+          selectDate = date;
+          var _monthData =
+              data[date.year.toString() + '-' + date.month.toString()];
+
+          decided = _monthData[date.day.toString()]['1'].toString();
+          unknown = _monthData[date.day.toString()]['2'].toString();
+          comment = _monthData[date.day.toString()]['comment'].toString();
+        } catch (err) {
+          selectDate = date;
+          print("Error: $err");
+          comment = 'This data is not found.';
+          decided = 'This data is not found.';
+          unknown = 'This data is not found.';
+        }
       });
     }
 
@@ -28,7 +99,8 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ShiftRegistrationDetailPage()));
+              builder: (context) => ShiftRegistrationDetailPage(
+                  date, genre, decided, unknown, comment)));
     }
 
     return new Scaffold(
@@ -38,33 +110,28 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
         drawer: AppDrawer(),
         body: Column(children: <Widget>[
           Container(
-            child: CalendarCarousel<Event>(
-                headerMargin: EdgeInsets.symmetric(),
-                locale: 'JA',
-                onDayPressed: (DateTime date, List<Event> events) {
-                  onDayPressed(date, events);
-                },
-                weekendTextStyle: TextStyle(color: Colors.red),
-//                thisMonthDayBorderColor: Colors.grey,
-                weekFormat: false,
-                height: 400.0,
-                selectedDateTime: _currentDate,
-                daysHaveCircularBorder: false,
-                customGridViewPhysics: NeverScrollableScrollPhysics(),
-                markedDateShowIcon: true,
-                markedDateIconMaxShown: 2,
-                todayTextStyle: TextStyle(
-                  color: Colors.blueAccent,
-                ),
-                markedDateIconBuilder: (event) {
-                  return event.icon;
-                },
-                todayBorderColor: Colors.lightGreen,
-                onDayLongPressed: (DateTime date) {
-                  detailPages(date);
-                },
-                markedDateMoreShowTotal: false),
-          ),
+              child: CalendarCarousel(
+            weekendTextStyle: TextStyle(
+              color: Colors.red,
+            ),
+            weekFormat: false,
+            selectedDayBorderColor: Colors.green,
+            markedDatesMap: _markedDateMap,
+            selectedDayButtonColor: Colors.green,
+            selectedDayTextStyle: TextStyle(color: Colors.green),
+            todayBorderColor: Colors.transparent,
+            weekdayTextStyle: TextStyle(color: Colors.black),
+            height: 420.0,
+            daysHaveCircularBorder: true,
+            todayButtonColor: Colors.indigo,
+            locale: 'JA',
+            onDayPressed: (DateTime date, List<Event> events) {
+              onDayPressed(date, events);
+            },
+            onDayLongPressed: (DateTime date) {
+              detailPages(date);
+            },
+          )),
           Row(
             children: <Widget>[
               Text(' '),
@@ -81,7 +148,9 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
                 child: Text("シフト登録"),
                 color: Colors.orange,
                 textColor: Colors.white,
-                onPressed: () {},
+                onPressed: () {
+                  detailPages(selectDate);
+                },
               ),
             ],
           ),
@@ -91,6 +160,19 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
               '月' +
               selectDate.day.toString() +
               '日'),
+          Card(
+            child: InkWell(
+              splashColor: Colors.blue.withAlpha(30),
+              onTap: () {
+                detailPages(selectDate);
+              },
+              child: Container(
+                width: 300,
+                height: 100,
+                child: Text('◯: $decided\n△: $unknown\nComment: $comment'),
+              ),
+            ),
+          )
         ]));
   }
 }
