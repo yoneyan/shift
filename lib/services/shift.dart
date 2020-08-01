@@ -11,7 +11,6 @@ class ShiftService {
     await _auth.currentUser().then((value) => _id = value.uid);
 
     try {
-      bool _result;
       _firestore
           .collection('user')
           .document(_id)
@@ -19,11 +18,10 @@ class ShiftService {
           .document('request')
           .collection(_base['position'])
           .document(_base['year'].toString() + "-" + _base['month'].toString())
-          .setData(_doc, merge: true)
-          .then((value) => _result = true);
+          .setData(_doc, merge: true);
 //          .catchError((onError) => {_result = false});
       print('result: OK');
-      return _result;
+      return true;
     } catch (err) {
       print(err);
       return false;
