@@ -1,11 +1,8 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shift/drawer.dart';
 
 class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final Firestore _firestore = Firestore.instance;
 
   Future<String> signIn(String email, String password) async {
     FirebaseUser _user;
@@ -42,8 +39,8 @@ class Auth {
   Future<String> getUserName() async {
     var _firebaseUser = await FirebaseAuth.instance.currentUser();
     print(_firebaseUser.uid);
-    DocumentSnapshot _doc =
-        await _firestore.collection("user").document(_firebaseUser.uid).get();
+//    DocumentSnapshot _doc =
+//        await _firestore.collection("user").document(_firebaseUser.uid).get();
     return "test";
   }
 

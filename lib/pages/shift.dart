@@ -9,11 +9,11 @@ class ShiftPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
-        title: Text("Notes"),
+        title: Text("Shift(確定分)"),
       ),
       drawer: AppDrawer(),
       body: Center(
-        child: Text("Shift"),
+        child: Text("未実装"),
       ),
     );
   }

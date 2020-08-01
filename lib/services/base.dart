@@ -16,7 +16,7 @@ class Base {
                 for (int i = 0; i < doc.data.length; i++)
                   {
                     _data.add('value'),
-                    _data.add(doc.data['${i}']),
+                    _data.add(doc.data['$i']),
                   },
               });
     } catch (err) {
@@ -29,7 +29,6 @@ class Base {
 
   Future<List<String>> getShiftData(String id) async {
     List<String> _data = [];
-    List<dynamic> _tmp;
     try {
       await _firestore
           .collection('base')

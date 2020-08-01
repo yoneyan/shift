@@ -25,7 +25,7 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
   String comment = 'This data is not found.';
   String decided = 'This data is not found.';
   String unknown = 'This data is not found.';
-  String comment_tmp = '';
+  String commentTmp = '';
 
   //genre(tmp)
   String position = "0";
@@ -88,7 +88,7 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
         decided = "";
         unknown = "";
         comment = "";
-        comment_tmp = "";
+        commentTmp = "";
 
         selectDate = date;
         var _monthData =
@@ -114,13 +114,13 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
           }
         }
         comment = _monthData[date.day.toString()]['comment'].toString();
-        comment_tmp = comment;
+        commentTmp = comment;
       } catch (err) {
         //process error
         selectDate = date;
         print("Error: $err");
         comment = 'This data is not found.';
-        comment_tmp = '';
+        commentTmp = '';
         decided = 'This data is not found.';
         unknown = 'This data is not found.';
       }
@@ -151,7 +151,7 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
                       base: _baseShift,
                       position: position,
                       data: tmp,
-                      comment: comment_tmp,
+                      comment: commentTmp,
                     )));
       });
     }

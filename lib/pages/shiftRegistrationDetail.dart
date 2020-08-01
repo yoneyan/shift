@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shift/pages/shiftRegistration.dart';
-import 'package:shift/services/base.dart';
 import 'package:shift/services/shift.dart';
 
-import '../drawer.dart';
 
 //#1 Issue
 class ShiftRegistrationDetailPage extends StatefulWidget {
@@ -27,7 +25,6 @@ class ShiftRegistrationDetailPage extends StatefulWidget {
 }
 
 class _PageState extends State<ShiftRegistrationDetailPage> {
-  final Base _base = new Base();
   final ShiftService _shiftService = new ShiftService();
   final commentInputController = new TextEditingController();
   int genre;
@@ -81,7 +78,7 @@ class _PageState extends State<ShiftRegistrationDetailPage> {
   }
 
   @override
-  void registPush(BuildContext context) {
+  void pushRegistration(BuildContext context) {
     Map<String, dynamic> _base = new Map<String, dynamic>();
     Map<String, Map<String, dynamic>> _doc =
         new Map<String, Map<String, dynamic>>();
@@ -294,7 +291,7 @@ class _PageState extends State<ShiftRegistrationDetailPage> {
               splashColor: Colors.blue,
               shape: UnderlineInputBorder(),
               onPressed: () {
-                registPush(context);
+                pushRegistration(context);
               },
             ),
           )

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shift/login.dart';
@@ -8,7 +6,6 @@ import 'package:shift/pages/shift.dart';
 import 'package:shift/pages/shiftRegistration.dart';
 
 import 'package:shift/services/auth.dart';
-import 'routes.dart';
 
 class AppDrawer extends StatefulWidget {
 //  const AppDrawer({Key key, this.auth}) : super(key: key);
@@ -27,9 +24,9 @@ class AppDrawerState extends State<AppDrawer> {
   void initState() {
     super.initState();
     print("initState");
-    _auth.getUserName().then((value) => _name = value);
-
-//    initializeUser();
+    setState(() {
+      _auth.getUserName().then((value) => _name = value);
+    });
   }
 
   @override

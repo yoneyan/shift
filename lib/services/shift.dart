@@ -23,7 +23,7 @@ class ShiftService {
           .then((value) => _result = true);
 //          .catchError((onError) => {_result = false});
       print('result: OK');
-      return true;
+      return _result;
     } catch (err) {
       print(err);
       return false;
