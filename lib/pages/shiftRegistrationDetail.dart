@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shift/pages/shiftRegistration.dart';
 import 'package:shift/services/shift.dart';
 
-
 //#1 Issue
 class ShiftRegistrationDetailPage extends StatefulWidget {
   const ShiftRegistrationDetailPage({
@@ -86,9 +85,6 @@ class _PageState extends State<ShiftRegistrationDetailPage> {
     _base['position'] = widget.position.toString();
     _base['year'] = widget.date.year;
     _base['month'] = widget.date.month;
-    _doc[widget.date.day.toString()] = {
-      'comment': commentInputController.value.text
-    };
 
     if (widget.base[0] == "1" || widget.base[0] == "2") {
       for (int i = 1; i < widget.base.length; i++) {
@@ -97,7 +93,10 @@ class _PageState extends State<ShiftRegistrationDetailPage> {
           tmp += ',';
         }
       }
-      _doc[widget.date.day.toString()] = {'data': tmp};
+      _doc[widget.date.day.toString()] = {
+        'data': tmp,
+        'comment': commentInputController.value.text
+      };
     }
     print('sendBaseData: $_base');
     print('sendDocData: $_doc');
