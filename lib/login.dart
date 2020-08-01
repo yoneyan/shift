@@ -37,8 +37,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => ShiftPage())),
                   }
-              })
-          .catchError(() => snackBar(context, "メールアドレス又はパスワードが間違っています。"));
+              });
     } catch (err) {
       {
         snackBar(context, "メールアドレス又はパスワードが間違っています。");
