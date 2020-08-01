@@ -25,9 +25,17 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
   String comment = 'This data is not found.';
   String decided = 'This data is not found.';
   String unknown = 'This data is not found.';
+  String comment_tmp = '';
+
+  //genre(tmp)
+  String position = "0";
+  List<String> _baseShift = new List<String>();
 
   @override
   void initState() {
+    base.getShiftData(position).then((value) => {
+          _baseShift = value,
+        });
     int _year, _month;
     base.getShiftRegistrationData().then((value) => {
           data = value,
@@ -73,106 +81,153 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
   @override
   Widget build(BuildContext context) {
     base.getUser().then((value) => {print(value)});
-    String genre = "teacher";
+
+    void refreshShiftData(DateTime date) {
+      try {
+        //initialize
+        decided = "";
+        unknown = "";
+        comment = "";
+        comment_tmp = "";
+
+        selectDate = date;
+        var _monthData =
+            data[date.year.toString() + '-' + date.month.toString()];
+
+        //シフト記入されてるデータを,ごとにList型の_dataに格納する処理
+        List<String> _data =
+            _monthData[date.day.toString()]['data'].toString().split(',');
+        print("data:  $_data");
+
+        //_baseShift[0] is Type....
+        // Type: 0は日付による入力、1は◯とXの2択のみ,2は◯と△とXの3択
+        if (_baseShift[0] == "1" || _baseShift[0] == "2") {
+          for (int i = 0; i < _data.length; i++) {
+            // ◯
+            if (_data[i] == "1") {
+              decided += _baseShift[i + 1];
+            }
+            // △
+            if (_data[i] == "2") {
+              unknown += _baseShift[i + 1] + ' ';
+            }
+          }
+        }
+        comment = _monthData[date.day.toString()]['comment'].toString();
+        comment_tmp = comment;
+      } catch (err) {
+        //process error
+        selectDate = date;
+        print("Error: $err");
+        comment = 'This data is not found.';
+        comment_tmp = '';
+        decided = 'This data is not found.';
+        unknown = 'This data is not found.';
+      }
+    }
 
     void onDayPressed(DateTime date, List<Event> events) {
       setState(() {
-        try {
-          selectDate = date;
-          var _monthData =
-              data[date.year.toString() + '-' + date.month.toString()];
-
-          decided = _monthData[date.day.toString()]['1'].toString();
-          unknown = _monthData[date.day.toString()]['2'].toString();
-          comment = _monthData[date.day.toString()]['comment'].toString();
-        } catch (err) {
-          selectDate = date;
-          print("Error: $err");
-          comment = 'This data is not found.';
-          decided = 'This data is not found.';
-          unknown = 'This data is not found.';
-        }
+        refreshShiftData(date);
       });
     }
 
     void detailPages(DateTime date) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ShiftRegistrationDetailPage(
-                  date, genre, decided, unknown, comment)));
+      setState(() {
+        refreshShiftData(date);
+        var _monthData =
+            data[date.year.toString() + '-' + date.month.toString()];
+        var tmp;
+        try {
+          tmp = _monthData[date.day.toString()]['data'];
+        } catch (err) {
+          tmp = null;
+        }
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ShiftRegistrationDetailPage(
+                      date: date,
+                      base: _baseShift,
+                      position: position,
+                      data: tmp,
+                      comment: comment_tmp,
+                    )));
+      });
     }
 
-    return new Scaffold(
-        appBar: AppBar(
-          title: const Text("シフト登録"),
-        ),
-        drawer: AppDrawer(),
-        body: Column(children: <Widget>[
-          Container(
-              child: CalendarCarousel(
-            weekendTextStyle: TextStyle(
-              color: Colors.red,
+    return new WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+            appBar: AppBar(
+              title: const Text("シフト登録"),
             ),
-            weekFormat: false,
-            selectedDayBorderColor: Colors.green,
-            markedDatesMap: _markedDateMap,
-            selectedDayButtonColor: Colors.green,
-            selectedDayTextStyle: TextStyle(color: Colors.green),
-            todayBorderColor: Colors.transparent,
-            weekdayTextStyle: TextStyle(color: Colors.black),
-            height: 420.0,
-            daysHaveCircularBorder: true,
-            todayButtonColor: Colors.indigo,
-            locale: 'JA',
-            onDayPressed: (DateTime date, List<Event> events) {
-              onDayPressed(date, events);
-            },
-            onDayLongPressed: (DateTime date) {
-              detailPages(date);
-            },
-          )),
-          Row(
-            children: <Widget>[
-              Text(' '),
-              RaisedButton(
-                child: Text("曜日一括登録"),
-                color: Colors.orange,
-                textColor: Colors.white,
-                onPressed: () {
-                  selectDate = DateTime.now();
+            drawer: AppDrawer(),
+            body: Column(children: <Widget>[
+              Container(
+                  child: CalendarCarousel(
+                weekendTextStyle: TextStyle(
+                  color: Colors.red,
+                ),
+                weekFormat: false,
+                selectedDayBorderColor: Colors.green,
+                markedDatesMap: _markedDateMap,
+                selectedDayButtonColor: Colors.green,
+                selectedDayTextStyle: TextStyle(color: Colors.green),
+                todayBorderColor: Colors.transparent,
+                weekdayTextStyle: TextStyle(color: Colors.black),
+                height: 420.0,
+                daysHaveCircularBorder: true,
+                todayButtonColor: Colors.indigo,
+                locale: 'JA',
+                onDayPressed: (DateTime date, List<Event> events) {
+                  onDayPressed(date, events);
                 },
-              ),
-              Text(' '),
-              RaisedButton(
-                child: Text("シフト登録"),
-                color: Colors.orange,
-                textColor: Colors.white,
-                onPressed: () {
-                  detailPages(selectDate);
+                onDayLongPressed: (DateTime date) {
+                  detailPages(date);
                 },
+              )),
+              Row(
+                children: <Widget>[
+                  Text(' '),
+                  RaisedButton(
+                    child: Text("曜日一括登録"),
+                    color: Colors.orange,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      selectDate = DateTime.now();
+                    },
+                  ),
+                  Text(' '),
+                  RaisedButton(
+                    child: Text("シフト登録"),
+                    color: Colors.orange,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      detailPages(selectDate);
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
-          Text(selectDate.year.toString() +
-              '年' +
-              selectDate.month.toString() +
-              '月' +
-              selectDate.day.toString() +
-              '日'),
-          Card(
-            child: InkWell(
-              splashColor: Colors.blue.withAlpha(30),
-              onTap: () {
-                detailPages(selectDate);
-              },
-              child: Container(
-                width: 300,
-                height: 100,
-                child: Text('◯: $decided\n△: $unknown\nComment: $comment'),
-              ),
-            ),
-          )
-        ]));
+              Text(selectDate.year.toString() +
+                  '年' +
+                  selectDate.month.toString() +
+                  '月' +
+                  selectDate.day.toString() +
+                  '日'),
+              Card(
+                child: InkWell(
+                  splashColor: Colors.blue.withAlpha(30),
+                  onTap: () {
+                    detailPages(selectDate);
+                  },
+                  child: Container(
+                    width: 300,
+                    height: 100,
+                    child: Text('◯: $decided\n△: $unknown\nComment: $comment'),
+                  ),
+                ),
+              )
+            ])));
   }
 }
