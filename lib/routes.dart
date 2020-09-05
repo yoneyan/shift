@@ -1,5 +1,5 @@
 import 'package:shift/pages/shift.dart';
 
 class Routes {
-  static const String shift = ShiftPage.routeName;
+  // static const String shift = ShiftPage;
 }

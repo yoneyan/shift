@@ -14,9 +14,9 @@ void main() {
     home: LoginPage(),
 //    home: RootPage(title: 'Shift', auth: new Auth()),
     routes: {
-      Routes.shift: (context) => ShiftPage(),
+      // Routes.shift: (context) => ShiftPage(),
 //      Routes.shiftRegistration: (context) => ShiftRegistrationPage(),
-//      "/shift": (context) => ShiftPage(),
+      "/shift": (context) => ShiftPage(),
     },
   ));
 }
