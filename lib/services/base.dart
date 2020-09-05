@@ -78,7 +78,8 @@ class Base {
     }
   }
 
-  Future<Map<String, Map<String, dynamic>>> getShiftRegistrationData() async {
+  Future<Map<String, Map<String, dynamic>>> getShiftRegistrationData(
+      String id) async {
     Map<String, Map<String, dynamic>> _data =
         new Map<String, Map<String, dynamic>>();
     String _id;
@@ -91,7 +92,36 @@ class Base {
           .document(_id)
           .collection('shift')
           .document('request')
-          .collection('0')
+          .collection(id)
+          .getDocuments();
+      for (int i = 0; i < querySnapshot.documents.length; i++) {
+        var a = querySnapshot.documents[i];
+        _data[a.documentID.toString()] = a.data;
+      }
+      print(_data);
+      return _data;
+    } catch (err) {
+      print('NULL');
+      print(err);
+      return null;
+    }
+  }
+
+  Future<Map<String, Map<String, dynamic>>> getShiftConfirmData(
+      String id) async {
+    Map<String, Map<String, dynamic>> _data =
+        new Map<String, Map<String, dynamic>>();
+    String _id;
+    await _auth.currentUser().then((value) => _id = value.uid);
+
+    //500: time 501:difference
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('user')
+          .document(_id)
+          .collection('shift')
+          .document('confirm')
+          .collection(id)
           .getDocuments();
       for (int i = 0; i < querySnapshot.documents.length; i++) {
         var a = querySnapshot.documents[i];
