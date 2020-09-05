@@ -37,12 +37,12 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
           _baseShift = value,
         });
     int _year, _month;
-    base.getShiftRegistrationData().then((value) => {
+    base.getShiftRegistrationData("0").then((value) => {
           data = value,
           value.forEach((key, value) {
-            var tmp = key.split('-');
-            _year = int.parse(tmp[0]);
-            _month = int.parse(tmp[1]);
+            var yearAndMonth = key.split('-');
+            _year = int.parse(yearAndMonth[0]);
+            _month = int.parse(yearAndMonth[1]);
             try {
               value.forEach((key, value) {
                 int _day = int.parse(key);
@@ -82,6 +82,7 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
   Widget build(BuildContext context) {
     base.getUser().then((value) => {print(value)});
 
+    //日付選択時
     void refreshShiftData(DateTime date) {
       try {
         //initialize
@@ -105,7 +106,7 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
           for (int i = 0; i < _data.length; i++) {
             // ◯
             if (_data[i] == "1") {
-              decided += _baseShift[i + 1];
+              decided += _baseShift[i + 1] + ' ';
             }
             // △
             if (_data[i] == "2") {
@@ -132,16 +133,17 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
       });
     }
 
+    //詳細ページ
     void detailPages(DateTime date) {
       setState(() {
         refreshShiftData(date);
         var _monthData =
             data[date.year.toString() + '-' + date.month.toString()];
-        var tmp;
+        var dayData;
         try {
-          tmp = _monthData[date.day.toString()]['data'];
+          dayData = _monthData[date.day.toString()]['data'];
         } catch (err) {
-          tmp = null;
+          dayData = null;
         }
         Navigator.push(
             context,
@@ -150,7 +152,7 @@ class _ShiftRegistrationPageState extends State<ShiftRegistrationPage> {
                       date: date,
                       base: _baseShift,
                       position: position,
-                      data: tmp,
+                      data: dayData,
                       comment: commentTmp,
                     )));
       });
